@@ -223,6 +223,8 @@ public class SummaryDataProcessorTest {
 				"select * from APPLICATION__C..", " Alter Table APPLICATION__C..");
 		RunSummaryMgmt runSummaryMgmt8 = new RunSummaryMgmt(7L, 2, 1,"EUR-EU", "AUT", 2, "APPLICATION__C",
 				"select * from APPLICATION__C..", " Alter Table APPLICATION__C..",11L,11L,11L);
+		RunSummaryMgmt runSummaryMgmt9 = new RunSummaryMgmt( 1l,  2l,  1,  "AUT",  2,
+		        "APPLICATION_C",  "Test", "Test" ,  "Test");
 		lstRunSummaryMgmt.add(runSummaryMgmt2);
 		lstRunSummaryMgmt.add(runSummaryMgmt1);
 		lstRunSummaryMgmt.add(runSummaryMgmt3);

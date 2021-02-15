@@ -153,9 +153,14 @@ public class GdprOutputDaoImplTest {
 		runModuleMgmt3.setModuleId(1L);
 		runModuleMgmt3.setErrorDetails("Test Exception");
 		runModuleMgmt3.getModuleId();
+		runModuleMgmt3.setRunStatus("SUCCESS");
+		runModuleMgmt3.getRunStatus();
 		runModuleMgmt3.getCount();
 		runModuleMgmt3.setComments("Running");
-		RunModuleMgmt runModuleMgmt4 = new RunModuleMgmt("SUCCESS");
+		runModuleMgmt3.setComments("Running");
+		RunModuleMgmt	runModuleMgmt4= new RunModuleMgmt( 1l,  2L, "GlobalConstants.MODULE_INITIALIZATION" ,
+				 "Anonymize Initialize Sub Module",  "SUCCESS",  "Test",  "SUCCESS");
+		RunModuleMgmt runModuleMgmt5 = new RunModuleMgmt("SUCCESS");
 		lstrunModuleMgmt.add(runModuleMgmt2);
 		return lstrunModuleMgmt;
 	}

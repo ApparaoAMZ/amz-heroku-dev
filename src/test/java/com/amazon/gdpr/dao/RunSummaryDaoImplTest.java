@@ -117,9 +117,9 @@ public class RunSummaryDaoImplTest {
 	private List<RunSummaryMgmt> lstRunSummaryMgmt() {
 		List<RunSummaryMgmt> lstRunSummaryMgmt = new ArrayList<RunSummaryMgmt>();
 		RunSummaryMgmt runSummaryMgmt1 = new RunSummaryMgmt(1L, 1, "EUR-EU", "AUT", 1, "APPLICATION__C",
-				"select * from XX", " Alter Table XX");
+				"select * from APPLICATION_c", " Alter Table APPLICATION_c");
 		RunSummaryMgmt runSummaryMgmt2 = new RunSummaryMgmt(1L, 1, "EUR-EU", "AUT", 1, "INTERVIEW__C",
-				"select * from XX", " Alter Table XX");
+				"select * from INTERVIEW_C", " Alter Table INTERVIEW_C");
 		lstRunSummaryMgmt.add(runSummaryMgmt2);
 		lstRunSummaryMgmt.add(runSummaryMgmt1);
 		return lstRunSummaryMgmt;
