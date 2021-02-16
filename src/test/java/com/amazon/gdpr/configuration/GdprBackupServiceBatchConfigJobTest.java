@@ -91,19 +91,7 @@ public class GdprBackupServiceBatchConfigJobTest {
 
 	@Test
 	public void processGdprBackupServiceJobTest() { 
-		/*
-		 * job = jobBuilderFactory.get("processGdprBackupServiceJob").incrementer(new
-		 * RunIdIncrementer())
-		 * .listener(backupListener(GlobalConstants.JOB_BACKUP_SERVICE_LISTENER)).flow(
-		 * gdprBackupServiceStep()) .end().build();
-		 */
-
-		/*
-		 * step = stepBuilderFactory.get("gdprBackupServiceStep") .<BackupServiceInput,
-		 * BackupServiceOutput>chunk(SqlQueriesConstant.BATCH_ROW_COUNT)
-		 * .reader(backupServiceReader(0)).processor(new GdprBackupServiceProcessor())
-		 * .writer(new BackupServiceOutputWriter(backupServiceDaoImpl)).build();
-		 */
+	
 		Mockito.when(jobBuilderFactory.get(Mockito.anyString())).thenReturn(jobBuilder);
 		Mockito.when(jobBuilder.incrementer(Mockito.anyObject())).thenReturn(jobBuilder);
 		Mockito.when(jobBuilder.listener(Mockito.anyObject())).thenReturn(jobBuilder);
