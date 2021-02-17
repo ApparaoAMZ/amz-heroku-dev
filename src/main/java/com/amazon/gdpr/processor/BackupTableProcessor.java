@@ -54,9 +54,9 @@ public class BackupTableProcessor {
 			moduleStartDateTime = new Date();
 			List<BackupTableDetails> lstBackupTableDetails = backupTableProcessorDaoImpl.fetchBackupTableDetails();
 			List<ImpactTableDetails> lstImpactTableDetails = gdprInputDaoImpl.fetchImpactTableDetailsMap();
-			if (refreshBackupTables(lstBackupTableDetails)) {
+		//	if (refreshBackupTables(lstBackupTableDetails)) {
 				bkpupTblProcessStatus = bkpupTableCheck(lstBackupTableDetails, lstImpactTableDetails);
-			}
+			//}
 			backupStatus = GlobalConstants.MSG_BKPUP_TABLE_STATUS;
 		} catch (GdprException exception) {
 			System.out.println(
