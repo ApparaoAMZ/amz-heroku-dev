@@ -74,36 +74,37 @@ public class InitServiceTest {
 	}
 
 	@Test
-	@Ignore
 	public void initServiceTest() throws GdprException {
 		String runName = "Test";
-		/*
-		 * Long runId = 2L; int insertRunAnonymizationCounts = 2; String
-		 * initServiceReturnStatus = ""; String processBackupTableStatus = ""; String
-		 * summaryStatus = "Summary details : " + "2"; String reOrganizeDataStatus =
-		 * "Reorganizing GDPR_Depersonalization__c initiated. ";
-		 */
+
+		Long runId = 2L;
+		int insertRunAnonymizationCounts = 2;
+		String initServiceReturnStatus = "";
+		String processBackupTableStatus = "";
+		String summaryStatus = "Summary details : " + "2";
+		String reOrganizeDataStatus = "Reorganizing GDPR_Depersonalization__c initiated. ";
+
 		List<String> selectedCountries = lstselectedCountries();
-		/*
-		 * String expectedRes =
-		 * "null; Run Anonymization Initiated Count : 2; ; Summary details : 2; Reorganizing GDPR_Depersonalization__c initiated. "
-		 * ; Boolean oldRun =true;
-		 * Mockito.when(runMgmtProcessor.initializeRunStatus).thenReturn(
-		 * initServiceReturnStatus);
-		 * Mockito.when(runMgmtProcessor.oldRun).thenReturn(oldRun);
-		 * Mockito.when(runMgmtProcessor.initializeRun(runName)).thenReturn(runId);
-		 * Mockito.when(anonymizationProcessor.loadRunAnonymization(runId,
-		 * selectedCountries)) .thenReturn(insertRunAnonymizationCounts);
-		 * Mockito.when(bkpupTableProcessor.processBkpupTable(runId)).thenReturn(
-		 * processBackupTableStatus);
-		 * Mockito.when(summaryDataProcessor.processSummaryData(runId)).thenReturn(
-		 * summaryStatus); Mockito.when(reOrganizeInputProcessor.reOrganizeData(runId,
-		 * selectedCountries)) .thenReturn(reOrganizeDataStatus); String
-		 * backupServiceStatus = "GlobalConstants.MSG_BACKUPSERVICE_JOB";
-		 */
+		runMgmtProcessor.oldRun=false; 
+		runMgmtProcessor.initializeRunStatus="";
+		String expectedRes = "; Run Anonymization Initiated Count : 2; ; Summary details : 2; Reorganizing GDPR_Depersonalization__c initiated. ";
+	   
+		//Mockito.when(runMgmtProcessor.initializeRunStatus).thenReturn(initServiceReturnStatus);
+		//Mockito.when(runMgmtProcessor.oldRun).thenReturn(oldRun);
+		Mockito.when(runMgmtProcessor.initializeRun(runName)).thenReturn(runId);
+		Mockito.when(anonymizationProcessor.loadRunAnonymization(runId, selectedCountries))
+				.thenReturn(insertRunAnonymizationCounts);
+		Mockito.when(bkpupTableProcessor.processBkpupTable(runId)).thenReturn(processBackupTableStatus);
+		Mockito.when(summaryDataProcessor.processSummaryData(runId)).thenReturn(summaryStatus);
+		Mockito.when(reOrganizeInputProcessor.reOrganizeData(runId, selectedCountries))
+				.thenReturn(reOrganizeDataStatus);
+		String backupServiceStatus = "GlobalConstants.MSG_BACKUPSERVICE_JOB";
+
 		String actualRes = initService.initService(runName, selectedCountries);
-		//assertEquals(expectedRes, actualRes);
+		
+		assertEquals(expectedRes, actualRes);
 	}
+
 
 	private List<String> lstselectedCountries() {
 		List<String> selectedCountries = new ArrayList<String>();
