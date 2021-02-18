@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
-public class GdprCmdLineApplicationTest {
+public class GdprCmdLineApplicationTest extends GdprCmdLineApplication{
 
 	@InjectMocks
 	GdprCmdLineApplication gdprCmdLineApplication;
@@ -14,8 +14,9 @@ public class GdprCmdLineApplicationTest {
 	public void runTest() {
 		gdprCmdLineApplication.run();
 	}
-	/*
-	 * @Test public void mainTest() { String[] args= {"Test"};
-	 * gdprCmdLineApplication.main(args); }
-	 */
+	
+	/*@Test 
+	public void mainTest() { 
+		//GdprCmdLineApplication.main(new String[] {"a"}); 
+	}*/	
 }

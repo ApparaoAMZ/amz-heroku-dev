@@ -23,9 +23,12 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.amazon.gdpr.dao.RunMgmtDaoImpl;
+import com.amazon.gdpr.model.gdpr.output.RunSummaryMgmt;
 import com.amazon.gdpr.service.BackupService;
 import com.amazon.gdpr.service.InitService;
 import com.amazon.gdpr.view.GdprInput;
@@ -45,6 +48,8 @@ public class GdprProcessControllerTest {
 	InitService initService;
 
 	private MockMvc mockMvc;
+	
+	private MockMvc mock;
 
 	@Mock
 	BackupService backupService;
@@ -55,10 +60,17 @@ public class GdprProcessControllerTest {
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
-
 		mockMvc = MockMvcBuilders.standaloneSetup(gdprProcessController).build();
+		
+		this.mock = MockMvcBuilders.standaloneSetup(gdprProcessController)
+                .setViewResolvers(FileUploadControllerTest.viewResolver()).build();	
 	}
 
+	@Test
+	public @ResponseBody void gdprInputFormTestScenario() throws Exception {
+		mock.perform(MockMvcRequestBuilders.get("/gdprInput"));
+	}
+	
 	@Test
 	@Ignore
 	public void gdprInputFormTest() throws Exception {
@@ -90,7 +102,15 @@ public class GdprProcessControllerTest {
 		// .flashAttr("gdprInput", new GdprInput()));
 
 	}
-
+	
+	@Test
+	public void backupInitializeTest() {
+		GdprProcessController gdprProcessController = new GdprProcessController();
+		Map<String, RunSummaryMgmt> mapRunSummaryMgmt = new HashMap<String, RunSummaryMgmt>();
+		mapRunSummaryMgmt.put("Key", new RunSummaryMgmt());
+		gdprProcessController.backupInitialize(0, mapRunSummaryMgmt);
+	}
+	
 	private GdprInput GdprInputData() {
 		GdprInput gdprInput = new GdprInput();
 		List<String> lstSelectedRegion = new ArrayList<String>();
