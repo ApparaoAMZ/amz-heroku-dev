@@ -1,5 +1,7 @@
 package com.amazon.gdpr.batch;
 
+import static org.hamcrest.CoreMatchers.any;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 
 import java.util.Date;
@@ -30,51 +32,52 @@ public class GdprReadListenerTest {
 	@Mock
 	RunMgmtDaoImpl runMgmtDaoImpl;
 
+	
+	String impactedClass = "Test";
+	Date moduleStartDateTime = new Date();
+	long runId = 7L;
 	@InjectMocks
-	GdprReadListener gdprReadListener;
+	GdprReadListener gdprReadListener = new GdprReadListener(impactedClass, moduleStartDateTime, runId);
 
 	@Mock
 	RunMgmtProcessor runMgmtProcessor;
 
 	@Before
-	public void init() {
+	public void setup() {
 		MockitoAnnotations.initMocks(this);
-		String impactedClass = "Test";
-		Date moduleStartDateTime = new Date();
-		long runId = 7L;
-		 gdprReadListener = new GdprReadListener(impactedClass, moduleStartDateTime, runId);
+	
 	}
 
 	@Test
-	@Ignore
+	//@Ignore
 	public void beforeReadTest() {
 		gdprReadListener.beforeRead();
 	}
+	
+	
 
 	@Test
 	@Ignore
 	public void afterRead() {
-		gdprReadListener.afterRead(anyObject());
+		gdprReadListener.afterRead(any());
 	}
 
-	/*
-	 * @Test public void onReadErrorTest() throws GdprException { // String
-	 * impactedClass = "Test"; Date moduleStartDateTime = new Date(); long runId =
-	 * 7L; // GdprReadListener gdprReadListenerRef = new
-	 * GdprReadListener(impactedClass, moduleStartDateTime, runId);
-	 * 
-	 * String errorDetails = ""; Exception exception = new Exception(); String
-	 * reOrganizeDataStatus =
-	 * "Facing issues in reading GDPR_Depersonalization table. "; RunModuleMgmt
-	 * runModuleMgmt = new RunModuleMgmt(runId,
-	 * GlobalConstants.MODULE_INITIALIZATION,
-	 * GlobalConstants.SUB_MODULE_REORGANIZE_JOB_INITIALIZE,
-	 * GlobalConstants.STATUS_FAILURE, moduleStartDateTime, new Date(),
-	 * reOrganizeDataStatus, errorDetails);
-	 * Mockito.doNothing().when(moduleMgmtProcessor).initiateModuleMgmt(
-	 * runModuleMgmt);
-	 * Mockito.doNothing().when(runMgmtDaoImpl).updateRunComments(runId,
-	 * reOrganizeDataStatus); gdprReadListener.onReadError(exception); }
-	 */
+	@Test
+	//@Ignore
+	public void onReadErrorTest() throws GdprException { 
+		String impactedClass = "Test";
+		Date moduleStartDateTime = new Date();
+		long runId = 7L;
+
+		String errorDetails = "[Ljava.lang.StackTraceElement;@614ca7df";
+		Exception exception = new Exception();
+		String reOrganizeDataStatus = "Facing issues in reading GDPR_Depersonalization table. ";
+		RunModuleMgmt runModuleMgmt = new RunModuleMgmt(runId, GlobalConstants.MODULE_INITIALIZATION,
+				GlobalConstants.SUB_MODULE_REORGANIZE_JOB_INITIALIZE, GlobalConstants.STATUS_FAILURE,
+				moduleStartDateTime, moduleStartDateTime, reOrganizeDataStatus, errorDetails);
+		Mockito.doNothing().when(moduleMgmtProcessor).initiateModuleMgmt(runModuleMgmt);
+		Mockito.doNothing().when(runMgmtDaoImpl).updateRunComments(runId, reOrganizeDataStatus);
+		gdprReadListener.onReadError(exception);
+	}
 
 }

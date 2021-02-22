@@ -68,7 +68,27 @@ public class RunMgmtProcessorTest {
 		Mockito.doNothing().when(runMgmtDaoImpl).initiateNewRun(runName);
 		Long response=runMgmtProcessor.initializeRun(runName);
 		assertEquals(runId, response);
-		System.out.println("RunId:"+response);
+	}
+	@Test
+	public void initializeRunPositiveTest1() throws GdprException {
+		Date moduleStartDateTime = null;
+		Date moduleEndDateTime = null;
+		moduleStartDateTime = new Date();
+		moduleEndDateTime = new Date();
+		RunModuleMgmt runModuleMgmt = new RunModuleMgmt(2L, "Initialization Module", "Tagging Archival Job Sub Module",
+				"RE-RUN", moduleStartDateTime, moduleEndDateTime, "Run Anonymization Initiated Count : 0","");
+		RunMgmt runMgmt = new RunMgmt();
+		runMgmt.setRunId(2L);
+		runMgmt.setRunName("Test");
+		runMgmt.setRunStatus("SUCCESS");
+		String runName = "Test";
+		Long runId = 2L;
+		Mockito.when(runMgmtDaoImpl.fetchLastRunDetail()).thenReturn(runMgmt);
+		Mockito.doNothing().when(moduleMgmtProcessor).initiateModuleMgmt(runModuleMgmt);
+		Mockito.doNothing().when(runMgmtDaoImpl).initiateNewRun(runName);
+		Long response=runMgmtProcessor.initializeRun(runName);
+		assertEquals(runId, response);
+		//System.out.println("RunId:"+response);
 	}
 	
 	@Test(expected = Exception.class)
