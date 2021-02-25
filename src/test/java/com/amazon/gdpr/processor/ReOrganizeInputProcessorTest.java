@@ -7,14 +7,17 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 
 import com.amazon.gdpr.dao.GdprInputDaoImpl;
 import com.amazon.gdpr.dao.GdprOutputDaoImpl;
@@ -51,6 +54,7 @@ public class ReOrganizeInputProcessorTest {
 	
 	@Mock
 	BackupService backupService;
+	
 	
 	@Before
 	public void init() {
@@ -115,6 +119,42 @@ public class ReOrganizeInputProcessorTest {
 		jobThread= reOrganizeInputProcessor.new JobThread(runId, selectedCountries);
 		jobThread.run();
 		assertEquals(resActual, response);
+	}
+	
+	@Test
+	public void reOrganizeDataNoselectedCountriesTest() throws GdprException {
+		JobThread jobThread ;
+		List<String> selectedCountries = new ArrayList<String>();
+		//selectedCountries.add("AUT");
+		//selectedCountries.add("BEL");
+		long runId=3L;
+		Date moduleStartDateTime = null;
+		Date moduleEndDateTime = null;
+		moduleStartDateTime = new Date();
+		moduleEndDateTime = new Date();
+		String errorDetails="";
+		String moduleStatus="SUCCESS";
+		String prevJobModuleStatus="SUCCESS";
+		String reOrganizeDataStatus=GlobalConstants.MSG_REORGANIZEINPUT_JOB;
+		String resActual=GlobalConstants.MSG_REORGANIZEINPUT_JOB;
+		RunModuleMgmt runModuleMgmt = new RunModuleMgmt(runId, GlobalConstants.MODULE_INITIALIZATION, 
+				GlobalConstants.SUB_MODULE_REORGANIZE_JOB_INITIALIZE, moduleStatus,moduleStartDateTime, 
+				new Date(), reOrganizeDataStatus, errorDetails);
+		Mockito.doNothing().when(moduleMgmtProcessor).initiateModuleMgmt(runModuleMgmt);
+		Mockito.when(moduleMgmtProcessor.prevJobModuleStatus(runId)).thenReturn(prevJobModuleStatus);
+		Mockito.doNothing().when(runMgmtDaoImpl).updateRunComments(runId, reOrganizeDataStatus);
+		String backupServiceResponse=GlobalConstants.MSG_BACKUPSERVICE_JOB;
+		Mockito.when(backupService.backupServiceInitiate(runId)).thenReturn(backupServiceResponse);
+		String response=reOrganizeInputProcessor.reOrganizeData(runId, selectedCountries);
+		jobThread= reOrganizeInputProcessor.new JobThread(runId, selectedCountries);
+		jobThread.run();
+		assertEquals(resActual, response);
+	}
+	
+	
+	
+	private Object throwException() throws Exception {
+		  throw new JobExecutionAlreadyRunningException(null);
 	}
 	@Test(expected=Exception.class)
 	public void reOrganizeDataExceptionTest() throws GdprException {

@@ -1,9 +1,7 @@
 package com.amazon.gdpr.processor;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyInt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +10,8 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -20,8 +20,7 @@ import org.mockito.MockitoAnnotations;
 import com.amazon.gdpr.dao.GdprInputFetchDaoImpl;
 import com.amazon.gdpr.model.gdpr.input.ImpactTable;
 import com.amazon.gdpr.model.gdpr.output.RunSummaryMgmt;
-import com.amazon.gdpr.util.GlobalConstants;
-
+@RunWith(value = BlockJUnit4ClassRunner.class)
 public class TagQueryProcessorTest {
 
 	@Before
@@ -42,15 +41,18 @@ public class TagQueryProcessorTest {
 		Map<String, ImpactTable> mapImpactTableRes = tagQueryProcessor.fetchImpactTableMap(runId);
 		assertEquals(mapImpactTableRes.size(), mapImpactTable.size());
 	}
+	@Test(expected = Exception.class)
+	public void fetchImpactTableMapExceptionTest() throws Throwable {
+		Long runId = 7L;
+		Map<String, ImpactTable> mapImpactTable = mapImpactTable();
+		Mockito.when(gdprInputFetchDaoImpl.fetchImpactTable()).thenThrow(Exception.class); // Map<String, ImpactTable>
+		tagQueryProcessor.fetchImpactTableMap(anyInt());
+		throwException();
+	}
 
-	/*
-	 * @Test(expected = Exception.class) public void
-	 * fetchImpactTableMapExceptionTest() { Long runId = 7L; Map<String,
-	 * ImpactTable> mapImpactTable = mapImpactTable();
-	 * Mockito.when(gdprInputFetchDaoImpl.fetchImpactTable()).thenThrow(Exception.
-	 * class); // Map<String, ImpactTable> // mapImpactTableRes =
-	 * tagQueryProcessor.fetchImpactTableMap(runId); }
-	 */
+	private Object throwException() throws Exception {
+		  throw new Exception();
+	}
 
 	@Test
 	public void updateSummaryQueryTest() {

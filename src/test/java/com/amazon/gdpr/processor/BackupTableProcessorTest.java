@@ -3,7 +3,6 @@ package com.amazon.gdpr.processor;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,6 +10,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -20,14 +21,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.amazon.gdpr.dao.BackupTableProcessorDaoImpl;
 import com.amazon.gdpr.dao.GdprInputDaoImpl;
 import com.amazon.gdpr.dao.GdprOutputDaoImpl;
+import com.amazon.gdpr.dao.RunMgmtDaoImpl;
 import com.amazon.gdpr.model.gdpr.input.ImpactTableDetails;
 import com.amazon.gdpr.model.gdpr.output.BackupTableDetails;
-import com.amazon.gdpr.model.gdpr.output.RunErrorMgmt;
 import com.amazon.gdpr.model.gdpr.output.RunModuleMgmt;
 import com.amazon.gdpr.util.GdprException;
 import com.amazon.gdpr.util.GlobalConstants;
 
-public class BackupTableProcessorTest {
+import junit.framework.TestCase;
+@RunWith(value = BlockJUnit4ClassRunner.class)
+public class BackupTableProcessorTest extends TestCase {
 	@InjectMocks
 	BackupTableProcessor backupTableProcessor;
 	@Mock
@@ -38,6 +41,9 @@ public class BackupTableProcessorTest {
 	GdprOutputDaoImpl gdprOutputDaoImpl;
 	@Mock
 	ModuleMgmtProcessor moduleMgmtProcessor;
+	@Mock
+	RunMgmtDaoImpl runMgmtDaoImpl;
+
 	@Before
 	public void init() {
 		MockitoAnnotations.initMocks(this);
@@ -53,8 +59,42 @@ public class BackupTableProcessorTest {
 		Mockito.when(gdprInputDaoImpl.fetchImpactTableDetailsMap()).thenReturn(lstImpactTableDetails());
 		long runId = 2L;
 		String backupStatus = GlobalConstants.MSG_BKPUP_TABLE_STATUS;
+		String moduleStatus=GlobalConstants.STATUS_SUCCESS;
+		 RunModuleMgmt runModuleMgmt = new RunModuleMgmt(runId,
+				  GlobalConstants.MODULE_INITIALIZATION,
+				  GlobalConstants.SUB_MODULE_BACKUP_TABLE_INITIALIZE, moduleStatus,
+				  new Date(), new Date(), backupStatus, "");
+				 Mockito.doNothing().when(moduleMgmtProcessor).initiateModuleMgmt(runModuleMgmt);
+				 Mockito.doNothing().when(runMgmtDaoImpl).updateRunStatus(runId, GlobalConstants.STATUS_FAILURE, backupStatus);
+		
 		String reponse = backupTableProcessor.processBkpupTable(runId);
 		assertEquals(backupStatus, reponse);
+	}
+	
+	@Test(expected=Exception.class)
+	public void processBkpupTableExceptionTest() throws Exception {
+		Mockito.when(backupTableProcessorDaoImpl.refreshBackupTables(lstBackupTableDetails()))
+		.thenReturn(Boolean.TRUE);
+		boolean bkpupTableCheckStatus = false;
+		Mockito.when(backupTableProcessorDaoImpl.alterBackupTable(any(String[].class)))
+		.thenReturn(bkpupTableCheckStatus);
+		Mockito.when(backupTableProcessorDaoImpl.fetchBackupTableDetails()).thenReturn(lstBackupTableDetails());
+		Mockito.when(gdprInputDaoImpl.fetchImpactTableDetailsMap()).thenReturn(lstImpactTableDetails());
+		long runId = 2L;
+		String backupStatus = GlobalConstants.MSG_BKPUP_TABLE_STATUS;
+		String moduleStatus=GlobalConstants.STATUS_SUCCESS;
+		 RunModuleMgmt runModuleMgmt = new RunModuleMgmt(runId,
+				  GlobalConstants.MODULE_INITIALIZATION,
+				  GlobalConstants.SUB_MODULE_BACKUP_TABLE_INITIALIZE, moduleStatus,
+				  new Date(), new Date(), backupStatus, "");
+				 Mockito.doThrow(Exception.class).when(moduleMgmtProcessor).initiateModuleMgmt(anyObject());
+				 throwException();
+				 Mockito.doNothing().when(runMgmtDaoImpl).updateRunStatus(runId, GlobalConstants.STATUS_FAILURE, backupStatus);
+		 backupTableProcessor.processBkpupTable(runId);
+	 throwException();
+	}
+	private Object throwException() throws Exception {
+		  throw new Exception();
 	}
 	
 	@Test(expected=Exception.class)
